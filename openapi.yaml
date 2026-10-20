@@ -1,0 +1,105 @@
+openapi: 3.0.4
+info:
+  title: Background Remover
+  description: >-
+    Background Remover is an image background removal API. Upload a photo or
+    send its URL and it returns a PNG with the background made transparent, or
+    replaced with a solid color you choose.
+  termsOfService: https://apiverve.com/terms/
+  contact:
+    name: APIVerve Support
+    email: hello@apiverve.com
+    url: https://apiverve.com/contact
+  version: 1.0.0
+externalDocs:
+  description: Learn more about APIVerve
+  url: https://docs.apiverve.com?utm_source=openapi
+servers:
+  - url: https://api.apiverve.com/
+paths:
+  /v1/backgroundremover:
+    post:
+      summary: Background Remover
+      description: >-
+        Remove the background from an uploaded image file (JPG, PNG, GIF, WebP,
+        BMP; max 10MB)
+      operationId: backgroundremover
+      parameters:
+        - name: bgColor
+          in: query
+          schema:
+            type: string
+          required: false
+          description: >-
+            Optional hex color to fill the background with (e.g. #ffffff). Omit
+            for a transparent background.
+          example: '#ffffff'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    description: status
+                  error:
+                    type: string
+                    description: error
+                  data:
+                    type: object
+                    description: data
+              example:
+                status: ok
+                error: null
+                data:
+                  id: 3f6c2a91-7d4e-4b8a-9c21-5e0d8b7a6f13
+                  width: 700
+                  height: 577
+                  background: transparent
+                  foregroundRatio: 0.3778
+                  outputSize: 806519
+                  mimeType: image/png
+                  expires: 1761000000000
+                  downloadURL: https://storage.googleapis.com/apiverve/backgroundremover/3f6c2a91-7d4e-4b8a-9c21-5e0d8b7a6f13.png
+                code: 200
+        '401':
+          description: Your request was not authorized, or your API Key was invalid
+        '404':
+          description: Requested resource was not found
+        '500':
+          description: A server error has occurred, try again later
+      requestBody:
+        required: false
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                image:
+                  type: string
+                  format: binary
+                  description: >-
+                    File to upload (accepted: .jpg, .jpeg, .png, .gif, .webp,
+                    .bmp, max 10MB)
+                  x-acceptedTypes:
+                    - .jpg
+                    - .jpeg
+                    - .png
+                    - .gif
+                    - .webp
+                    - .bmp
+                  x-maxSizeMB: 10
+components:
+  securitySchemes:
+    api_key:
+      type: apiKey
+      name: x-api-key
+      in: header
+security:
+  - api_key: []
+sampleRequest:
+  url: https://upload.wikimedia.org/wikipedia/commons/2/26/YellowLabradorLooking_new.jpg
+  bgColor: '#ffffff'
